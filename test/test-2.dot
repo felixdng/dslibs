@@ -1,0 +1,31 @@
+digraph G{
+node[shape=record,style=filled,color=black,fontcolor=white];
+7[label="<f0> | <f1> 7 | <f2> "];
+node[shape=record,style=filled,color=black,fontcolor=white];
+3[label="<f0> | <f1> 3 | <f2> "];
+7:f0:sw->3:f1;
+node[shape=record,style=filled,color=black,fontcolor=white];
+15[label="<f0> | <f1> 15 | <f2> "];
+7:f2:se->15:f1;
+node[shape=record,style=filled,color=black,fontcolor=white];
+1[label="<f0> | <f1> 1 | <f2> "];
+3:f0:sw->1:f1;
+node[shape=record,style=filled,color=black,fontcolor=white];
+5[label="<f0> | <f1> 5 | <f2> "];
+3:f2:se->5:f1;
+node[shape=record,style=filled,color=red,fontcolor=white];
+11[label="<f0> | <f1> 11 | <f2> "];
+15:f0:sw->11:f1;
+node[shape=record,style=filled,color=black,fontcolor=white];
+19[label="<f0> | <f1> 19 | <f2> "];
+15:f2:se->19:f1;
+node[shape=record,style=filled,color=black,fontcolor=white];
+9[label="<f0> | <f1> 9 | <f2> "];
+11:f0:sw->9:f1;
+node[shape=record,style=filled,color=black,fontcolor=white];
+13[label="<f0> | <f1> 13 | <f2> "];
+11:f2:se->13:f1;
+node[shape=record,style=filled,color=red,fontcolor=white];
+17[label="<f0> | <f1> 17 | <f2> "];
+19:f0:sw->17:f1;
+}

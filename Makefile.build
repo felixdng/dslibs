@@ -1,0 +1,61 @@
+PHONY:=__build
+__build:
+
+# 清空变量
+obj-y:=
+subdir-y:=
+EXTRA_CFLAGS:=
+
+CURDIR:=$(shell pwd)
+CURDIR_PREFIX:=$(patsubst $(TOPDIR)%,$(OBJS_PREFIX)%,$(CURDIR))
+
+# 包含同级目录的Makefile
+include Makefile
+
+# 子目录的目录名
+__subdir-y:=$(patsubst %/,%,$(filter %/,$(obj-y)))
+subdir-y+=$(__subdir-y)
+PHONY+=$(subdir-y)
+
+# 子目录的目标
+subdir_objs:=$(foreach v,$(subdir-y),$(v)/built-in.o)
+subdir_objs:=$(addprefix $(CURDIR_PREFIX)/,$(subdir_objs))
+
+# 当前目录的目标
+cur_objs:=$(filter-out %/,$(obj-y))
+# 依赖文件，使得修改头文件后能够重新编译
+dep_files:=$(foreach v,$(cur_objs),.$(v).d)
+cur_objs:=$(addprefix $(CURDIR_PREFIX)/,$(cur_objs))
+dep_files:=$(addprefix $(CURDIR_PREFIX)/,$(dep_files))
+# 列出存在的文件
+dep_files:=$(wildcard $(dep_files))
+
+ifneq ($(dep_files),)
+  include $(dep_files)
+endif
+
+
+# First Object
+__build:mk_objdir $(subdir-y) $(CURDIR_PREFIX)/built-in.o
+
+OBJ_DIR:=$(foreach v,$(subdir-y),$(CURDIR_PREFIX)/$(v))
+mk_objdir:
+ifneq ($(OBJ_DIR),)
+	mkdir -p $(OBJ_DIR)
+endif
+PHONY+=mk_objdir
+
+$(subdir-y):
+	make -C $@ -f $(TOPDIR)/Makefile.build
+
+$(CURDIR_PREFIX)/built-in.o:$(cur_objs) $(subdir_objs)
+	$(LD) -r $^ -o $@
+
+dep_file=$(CURDIR_PREFIX)/.$(notdir $@).d
+
+$(CURDIR_PREFIX)/%.o:%.c
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CFLAGS_$(notdir $@)) -Wp,-MMD,$(dep_file) -c $< -o $@
+	@sed -i 's/^.*\.o:/$(subst /,\/,$@):/g' $(dep_file)
+
+.PHONY:$(PHONY)
+
