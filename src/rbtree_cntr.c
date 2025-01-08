@@ -7,12 +7,15 @@
 #include "common.h"
 #include "mem_alloc.h"
 
+
+#define ALIGNED_LONG(_sz) ((_sz) + (((_sz) % sizeof(long)) ? (sizeof(long) - ((_sz) % sizeof(long))) : 0))
+
 typedef struct {
 	struct rb_node      rb;
 	struct list_head    list;
 	char                obj[];
 } cntr_node;
-#define NODE_SIZE(_sz) (sizeof(cntr_node) + _sz)
+#define NODE_SIZE(_sz) ALIGNED_LONG(sizeof(cntr_node) + (_sz))
 
 #define IS_HEAD_VALID(_phead) \
 	(_phead->obj_size > 0 && _phead->obj_num > 0 \
